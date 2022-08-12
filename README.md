@@ -1,10 +1,10 @@
 # Stoa
 
-![app_logo](https://raw.githubusercontent.com/pavelee/stoa/main/public/app_icon.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/pavelee/stoa/main/public/app_icon_256.png">
+</p>
 
 @TODO
-
-[Insert app screenshots](https://raw.githubusercontent.com/pavelee/stoa/main/public/app_icon_256.png)
 
 # Overview video (Optional)
 
