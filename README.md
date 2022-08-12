@@ -1,8 +1,10 @@
-# [Insert your hackathon title or the app's title (keep it short)]
+# Stoa
 
-[Insert description of app]
+![app_logo](https://raw.githubusercontent.com/pavelee/stoa/main/public/app_icon.png)
 
-[Insert app screenshots](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#uploading-assets)
+@TODO
+
+[Insert app screenshots](https://raw.githubusercontent.com/pavelee/stoa/main/public/app_icon_256.png)
 
 # Overview video (Optional)
 
