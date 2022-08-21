@@ -1,16 +1,40 @@
 import type { NextPage } from 'next'
 import Image from 'next/image';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import { FiBell } from 'react-icons/fi'
+import { Repository } from 'redis-om';
+import { Topic } from '../entity/topic';
+import { createRepository } from '../services/repositoryFactory';
 
 const Avatar: FunctionComponent = ({ text = 'PC' }) => {
   return (
     <div className="avatar placeholder cursor-pointer">
       <div className="bg-neutral-focus text-neutral-content rounded-full w-14 h-14">
-        <span className="text-xl">{text}</span>
+        {/* <span className="text-xl">{text}</span> */}
+        <img src="https://placeimg.com/300/300/animals" />
       </div>
     </div>
   )
+}
+
+const UserInfo: FunctionComponent = ({ }) => {
+  return (<div className="card">
+    <div className="card-body bg-base-100">
+      <div className="flex justify-center items-center">
+        <div className="flex-col">
+          <div className="avatar placeholder cursor-pointer">
+            <div className="bg-neutral-focus text-neutral-content rounded-full w-36 h-36">
+              {/* <span className="text-xl">{text}</span> */}
+              <img src="https://placeimg.com/300/300/animals" />
+            </div>
+          </div>
+          <div className="text-center text-2xl">
+            Paweł Ciosek
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>);
 }
 
 const NotificationBell: FunctionComponent = ({ notifications = [] }) => {
@@ -49,26 +73,49 @@ const InputIdeaCard: FunctionComponent = ({ placeholder = "What's on your mind?"
   )
 }
 
-const IdeaCard: FunctionComponent = ({ }) => {
+const IdeaCardWrapper: FunctionComponent<{ topic: Topic }> = ({ topic }) => {
+  const [comments, setComments] = useState([]);
+
+  const fetchComments = async (topic: Topic) => {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST}/api/comment?topic=${topic.entityId}`);
+    const data = await res.json();
+    setComments(data);
+  }
+
+  useEffect(() => {
+    fetchComments(topic);
+  }, [])
+
+  return <IdeaCard topic={topic} comments={comments} />
+}
+
+const IdeaCard: FunctionComponent<{ topic: Topic, comments: Array<any> }> = ({ topic, comments }) => {
+
   return (
     <div className="card bg-base-100 shadow-xl cursor-pointer">
       {/* <figure><img src="https://placeimg.com/1920/1080/arch" alt="Shoes" /></figure> */}
       <div className="card-body">
-        <div className="flex gap-5">
-          <div className="flex-col">
-            <div className="">
-              10 Polubień
-            </div>
-            <div>
-              2 komentarze
-            </div>
+        <div className="flex gap-3">
+          <div>
+            <Avatar />
           </div>
           <div>
             <h2 className="card-title">
-              Ekspres kawy na trzecim piętrze
+              {topic.title}
               <div className="badge badge-secondary">Produkcja</div>
             </h2>
-            <p>Brakuje nam eskpresu na trzecim piętrze. Biegamy po schodach z kawą!</p>
+            <p>{topic.desc}</p>
+          </div>
+        </div>
+        <div className="flex flex-row gap-3">
+          <div className="">
+            0 Polubień
+          </div>
+          <div>
+            {comments.length} komentarze
+          </div>
+          <div>
+            0 wyświetlenia
           </div>
         </div>
       </div>
@@ -86,7 +133,8 @@ const SideMenu: FunctionComponent = ({ }) => {
   )
 }
 
-const Home: NextPage = () => {
+const Home: NextPage = ({ topics }: any) => {
+  console.log('asdas');
   return (
     <div className="h-screen">
       <div className="navbar">
@@ -113,18 +161,38 @@ const Home: NextPage = () => {
         <div className="container mx-auto">
           <div className="flex gap-3">
             <div className="hidden md:block md:w-1/4 flex justify-center">
+              <UserInfo />
+              <div className="h-3"></div>
               <SideMenu />
             </div>
-            <div className="w-full md:w-3/4 flex-col justify-center items-start">
+            <div className="w-full space-y-3 md:w-3/4 flex-col justify-center items-start">
               <InputIdeaCard />
-              <div className="h-5"></div>
-              <IdeaCard />
+              <div className="space-y-3">
+                {
+                  topics.map((topic: Topic) => {
+                    return (
+                      <IdeaCardWrapper key={topic.entityId} topic={topic} />
+                    );
+                  })
+                }
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   )
+}
+
+export async function getServerSideProps(context: any) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST}/api/topic`)
+  const data = await res.json()
+
+  return {
+    props: {
+      topics: data
+    }, // will be passed to the page component as props
+  }
 }
 
 export default Home

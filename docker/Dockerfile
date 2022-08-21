@@ -2,6 +2,13 @@ ARG NODE_VERSION=18
 
 FROM node:${NODE_VERSION}-alpine AS app_common
 
+# set timezone in alpine container
+RUN apk add tzdata \
+    && cp /usr/share/zoneinfo/Europe/Warsaw /etc/localtime \
+    && echo "Europe/Warsaw" >  /etc/timezone \
+    && apk del tzdata
+ENV TZ="Europe/Warsaw"
+
 EXPOSE 3000
 
 WORKDIR /usr/src/app
