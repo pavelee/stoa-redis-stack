@@ -2,16 +2,19 @@ import type { NextPage } from 'next'
 import Image from 'next/image';
 import { FunctionComponent, useEffect, useState } from 'react';
 import { FiBell } from 'react-icons/fi'
+import { FcLikePlaceholder, FcLike } from 'react-icons/fc';
 import { Repository } from 'redis-om';
-import { Topic } from '../entity/topic';
+import { Comment } from '../entity/comment';
+import { Topic, topicSchema } from '../entity/topic';
+import { getRedisClient } from '../services/redis';
 import { createRepository } from '../services/repositoryFactory';
 
 const Avatar: FunctionComponent = ({ text = 'PC' }) => {
   return (
-    <div className="avatar placeholder cursor-pointer">
+    <div className="cursor-pointer">
       <div className="bg-neutral-focus text-neutral-content rounded-full w-14 h-14">
         {/* <span className="text-xl">{text}</span> */}
-        <img src="https://placeimg.com/300/300/animals" />
+        <img className="rounded-full" src="https://placeimg.com/300/300/animals" />
       </div>
     </div>
   )
@@ -73,51 +76,61 @@ const InputIdeaCard: FunctionComponent = ({ placeholder = "What's on your mind?"
   )
 }
 
-const IdeaCardWrapper: FunctionComponent<{ topic: Topic }> = ({ topic }) => {
-  const [comments, setComments] = useState([]);
-
-  const fetchComments = async (topic: Topic) => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST}/api/comment?topic=${topic.entityId}`);
-    const data = await res.json();
-    setComments(data);
-  }
-
-  useEffect(() => {
-    fetchComments(topic);
-  }, [])
-
-  return <IdeaCard topic={topic} comments={comments} />
-}
-
-const IdeaCard: FunctionComponent<{ topic: Topic, comments: Array<any> }> = ({ topic, comments }) => {
+const IdeaCard: FunctionComponent<{ topic: Topic }> = ({ topic }) => {
 
   return (
-    <div className="card bg-base-100 shadow-xl cursor-pointer">
+    <div className="bg-white shadow-xl rounded-lg cursor-pointer p-5">
       {/* <figure><img src="https://placeimg.com/1920/1080/arch" alt="Shoes" /></figure> */}
-      <div className="card-body">
-        <div className="flex gap-3">
-          <div>
-            <Avatar />
-          </div>
-          <div>
-            <h2 className="card-title">
-              {topic.title}
-              <div className="badge badge-secondary">Produkcja</div>
-            </h2>
-            <p>{topic.desc}</p>
-          </div>
+      <div className="flex gap-3">
+        <div>
+          <Avatar />
         </div>
-        <div className="flex flex-row gap-3">
-          <div className="">
-            0 Polubień
-          </div>
-          <div>
-            {comments.length} komentarze
-          </div>
-          <div>
-            0 wyświetlenia
-          </div>
+        <div className="flex flex-col">
+          <div>{topic.author.name}</div>
+          <div className="text-gray-500">{topic.created}</div>
         </div>
+      </div>
+      <div className="flex gap-3 mt-3">
+        <div>
+          <p>{topic.desc}</p>
+        </div>
+      </div>
+      <div className="flex flex-row gap-3 mt-3 text-gray-500">
+        <div className="">
+          0 Polubień
+        </div>
+        <div>
+          {topic.comments.length} komentarze
+        </div>
+        <div>
+          0 wyświetlenia
+        </div>
+      </div>
+      <hr className="mt-3" />
+      <div className="flex mt-3">
+        <div className="text-3xl">
+          <FcLikePlaceholder />
+          {/* <FcLike /> */}
+        </div>
+      </div>
+      <hr className="mt-3" />
+      <div className="flex flex-col">
+        {topic.comments.map((comment: Comment) => {
+          return (<div className="flex gap-1 p-3">
+            <div className="flex">
+              <Avatar />
+            </div>
+            <div className="flex-auto">
+              <div className="bg-gray-200 rounded-lg p-3">
+                <div className="font-bold">Paweł Ciosek</div>
+                <div>{comment.content}</div>
+              </div>
+              <div className="text-gray-400 text-sm">
+                {comment.created}
+              </div>
+            </div>
+          </div>)
+        })}
       </div>
     </div>
   )
@@ -134,7 +147,6 @@ const SideMenu: FunctionComponent = ({ }) => {
 }
 
 const Home: NextPage = ({ topics }: any) => {
-  console.log('asdas');
   return (
     <div className="h-screen">
       <div className="navbar">
@@ -171,7 +183,7 @@ const Home: NextPage = ({ topics }: any) => {
                 {
                   topics.map((topic: Topic) => {
                     return (
-                      <IdeaCardWrapper key={topic.entityId} topic={topic} />
+                      <IdeaCard key={topic.entityId} topic={topic} />
                     );
                   })
                 }
@@ -185,12 +197,42 @@ const Home: NextPage = ({ topics }: any) => {
 }
 
 export async function getServerSideProps(context: any) {
+  const fetchGlobalUser = async () => {
+    r = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST}/api/user?id=01GB3H6503G5N78AY0HZ7VB4TE`);
+    d = await r.json()
+    return d;
+  }
+
+  const fetchComments = async (topic: any) => {
+    r = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST}/api/comment?topic=${topic.elementId}`);
+    d = await r.json()
+    return d;
+  }
+
+  const fetchUser = async (topic: any) => {
+    r = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST}/api/user?id=${topic.author}`);
+    d = await r.json()
+    return d;
+  }
+
   const res = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST}/api/topic`)
   const data = await res.json()
 
+  let r, d = null;
+  for (let index = 0; index < data.length; index++) {
+    const element = data[index];
+    let comments = await fetchComments(element);
+    let author = await fetchUser(element);
+    element.comments = comments;
+    element.author = author;
+  }
+
+  let user = await fetchGlobalUser();
+
   return {
     props: {
-      topics: data
+      user: user,
+      topics: data,
     }, // will be passed to the page component as props
   }
 }

@@ -1,6 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Client } from 'redis-om';
 import { topicSchema } from '../../entity/topic';
 import { getRedisClient, isEntityExist } from '../../services/redis';
 
@@ -10,6 +9,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
+  const entityName = 'Topic';
   let client = await getRedisClient();
   let repo = client.fetchRepository(topicSchema);
   let method = req.method;
@@ -19,7 +19,7 @@ export default async function handler(
     let s = repo.search();
     let getdata;
     if (id) {
-      const exists = await isEntityExist(client, 'Topic', id as string);
+      const exists = await isEntityExist(client, entityName, id as string);
       if (!exists) {
         return res.status(404).json({});
       }
@@ -41,7 +41,7 @@ export default async function handler(
   const handleDelte = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     const { id } = req.query;
     if (id) {
-      const exists = await isEntityExist(client, 'Topic', id as string);
+      const exists = await isEntityExist(client, entityName, id as string);
       if (!exists) {
         return res.status(404).json({});
       }
@@ -54,11 +54,12 @@ export default async function handler(
     const { id } = req.query;
     const { title, desc } = req.body;
     if (id) {
-      const exists = await isEntityExist(client, 'Topic', id as string);
+      const exists = await isEntityExist(client, entityName, id as string);
       if (!exists) {
         return res.status(404).json({});
       }
       let data = await repo.fetch(id as string);
+      data.modified = new Date();
       if (title) {
         data.title = title;
       }
@@ -82,7 +83,7 @@ export default async function handler(
       return await handleDelte(req, res);
     default:
       res.status(400).json({
-        'error': 'asdas'
+        'error': 'Operation not allowed!'
       })
   }
 }

@@ -1,19 +1,19 @@
 import { Entity, Schema } from 'redis-om';
 
-interface Comment {
+export interface Comment {
     content: string;
-    points: number;
-    likes: string[];
     topic: string;
     author: string;
+    created: Date;
+    modified: Date;
 }
 
-class Comment extends Entity { }
+export class Comment extends Entity { }
 
 export const commentSchema = new Schema(Comment, {
-    username: { type: 'string' },
-    points: { type: 'number' },
-    likes: { type: 'string[]' },
+    content: { type: 'string' },
     topic: { type: 'string' },
     author: { type: 'string' },
+    created: { type: 'date' },
+    modified: { type: 'date' },
 })

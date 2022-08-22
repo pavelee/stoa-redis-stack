@@ -1,14 +1,19 @@
 import { Entity, Schema } from 'redis-om';
 
-interface User {
+export interface User {
     username: string;
+    name: string;
     points: number;
+    created: Date;
+    modified: Date;
 }
 
-class User extends Entity { }
+export class User extends Entity { }
 
 export const userSchema = new Schema(User, {
     username: { type: 'string' },
+    name: { type: 'string' },
     points: { type: 'number' },
-    likes: { type: 'string[]' },
+    created: { type: 'date' },
+    modified: { type: 'date' },
 })
