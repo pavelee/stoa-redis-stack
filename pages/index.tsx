@@ -9,44 +9,42 @@ import { Topic, topicSchema } from '../entity/topic';
 import { getRedisClient } from '../services/redis';
 import { createRepository } from '../services/repositoryFactory';
 
-const Avatar: FunctionComponent = ({ text = 'PC' }) => {
+const Avatar: FunctionComponent = ({ user, text = 'PC' }: any) => {
   return (
     <div className="cursor-pointer">
-      <div className="bg-neutral-focus text-neutral-content rounded-full w-14 h-14">
+      <div className="bg-neutral-focus text-neutral-content rounded-full w-12 h-12">
         {/* <span className="text-xl">{text}</span> */}
-        <img className="rounded-full" src="https://placeimg.com/300/300/animals" />
+        <img className="rounded-full" src={user.avatar} />
       </div>
     </div>
   )
 }
 
 const UserInfo: FunctionComponent = ({ }) => {
-  return (<div className="card">
-    <div className="card-body bg-base-100">
-      <div className="flex justify-center items-center">
-        <div className="flex-col">
-          <div className="avatar placeholder cursor-pointer">
-            <div className="bg-neutral-focus text-neutral-content rounded-full w-36 h-36">
-              {/* <span className="text-xl">{text}</span> */}
-              <img src="https://placeimg.com/300/300/animals" />
-            </div>
+  return (
+    <div className="bg-white flex justify-center items-center rounded-xl shadow-xl p-5">
+      <div className="flex-col">
+        <div className="cursor-pointer">
+          <div className="bg-neutral-focus text-neutral-content w-36 h-36">
+            {/* <span className="text-xl">{text}</span> */}
+            <img className="rounded-full" src="https://placeimg.com/300/300/animals" />
           </div>
-          <div className="text-center text-2xl">
-            Paweł Ciosek
-          </div>
+        </div>
+        <div className="text-center text-2xl">
+          Paweł Ciosek
         </div>
       </div>
     </div>
-  </div>);
+  );
 }
 
 const NotificationBell: FunctionComponent = ({ notifications = [] }) => {
   return (
-    <div className="dropdown">
+    <div className="dropdown border border-black p-3 rounded-full">
       <label tabIndex={0} className="btn rounded-full text-2xl w-14 h-14">
         <FiBell />
       </label>
-      <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-24">
+      <ul tabIndex={0} className="hidden">
         <li><a>Item 1</a></li>
         <li><a>Item 2</a></li>
       </ul>
@@ -56,7 +54,7 @@ const NotificationBell: FunctionComponent = ({ notifications = [] }) => {
 
 const PointCounter: FunctionComponent = ({ }) => {
   return (
-    <div className="w-14 h-14 bg-[#ffd700] rounded-full border-4 border-[#ccad00] flex justify-center items-center font-bold">
+    <div className="w-12 h-12 bg-[#ffd700] rounded-full border-4 border-[#ccad00] flex justify-center items-center font-bold">
       0
     </div>
   )
@@ -64,26 +62,23 @@ const PointCounter: FunctionComponent = ({ }) => {
 
 const InputIdeaCard: FunctionComponent = ({ placeholder = "What's on your mind?" }) => {
   return (
-    <div className="card bg-base-100 shadow-xl">
-      <div className="card-body">
-        <div className="flex gap-5">
-          <Avatar />
-          <textarea className="flex-auto textarea bg-gray-200 text-gray-600 rounded-xl h-14" placeholder={placeholder}></textarea>
-          <button className="btn btn-active btn-primary">publish</button>
-        </div>
+    <div className="bg-white shadow-xl p-5 rounded-xl">
+      <div className="flex gap-5">
+        {/* <Avatar /> */}
+        <textarea className="flex-auto p-3 bg-gray-200 text-gray-600 rounded-xl h-14" placeholder={placeholder}></textarea>
       </div>
     </div>
   )
 }
 
-const IdeaCard: FunctionComponent<{ topic: Topic }> = ({ topic }) => {
+const IdeaCard: FunctionComponent<{ topic: any }> = ({ topic }) => {
 
   return (
     <div className="bg-white shadow-xl rounded-lg cursor-pointer p-5">
       {/* <figure><img src="https://placeimg.com/1920/1080/arch" alt="Shoes" /></figure> */}
       <div className="flex gap-3">
         <div>
-          <Avatar />
+          <Avatar user={topic.author} />
         </div>
         <div className="flex flex-col">
           <div>{topic.author.name}</div>
@@ -97,7 +92,7 @@ const IdeaCard: FunctionComponent<{ topic: Topic }> = ({ topic }) => {
       </div>
       <div className="flex flex-row gap-3 mt-3 text-gray-500">
         <div className="">
-          0 Polubień
+          {topic.likes.length} Polubień
         </div>
         <div>
           {topic.comments.length} komentarze
@@ -107,18 +102,22 @@ const IdeaCard: FunctionComponent<{ topic: Topic }> = ({ topic }) => {
         </div>
       </div>
       <hr className="mt-3" />
-      <div className="flex mt-3">
+      <div className="flex mt-3 gap-5 items-center">
         <div className="text-3xl">
           <FcLikePlaceholder />
           {/* <FcLike /> */}
         </div>
+        <div>
+          <button className="bg-blue-100 p-1 rounded-xl shadow-sm">wyświetl</button>
+        </div>
       </div>
       <hr className="mt-3" />
       <div className="flex flex-col">
-        {topic.comments.map((comment: Comment) => {
-          return (<div className="flex gap-1 p-3">
+        {topic.comments.map((comment: any) => {
+          return (
+          <div className="flex gap-1 p-3">
             <div className="flex">
-              <Avatar />
+              <Avatar user={comment.author} />
             </div>
             <div className="flex-auto">
               <div className="bg-gray-200 rounded-lg p-3">
@@ -131,6 +130,9 @@ const IdeaCard: FunctionComponent<{ topic: Topic }> = ({ topic }) => {
             </div>
           </div>)
         })}
+        <div className="flex justify-center items-center">
+          <button className="bg-blue-200 p-3 rounded-xl shadow-sm">skomentuj</button>
+        </div>
       </div>
     </div>
   )
@@ -138,7 +140,7 @@ const IdeaCard: FunctionComponent<{ topic: Topic }> = ({ topic }) => {
 
 const SideMenu: FunctionComponent = ({ }) => {
   return (
-    <ul className="menu bg-base-100 rounded-xl">
+    <ul className="bg-white rounded-xl p-5">
       <li><a>Item 1</a></li>
       <li><a>Item 2</a></li>
       <li><a>Item 3</a></li>
@@ -146,12 +148,12 @@ const SideMenu: FunctionComponent = ({ }) => {
   )
 }
 
-const Home: NextPage = ({ topics }: any) => {
+const Home: NextPage = ({ topics, user }: any) => {
   return (
     <div className="h-screen">
-      <div className="navbar">
-        <div className="container mx-auto">
-          <div className="flex rounded-b-sm w-full">
+      <div className="bg-white">
+        <div className="container mx-auto p-3">
+          <div className="flex rounded-b-sm w-full items-center">
             <div className="shrink">
               <Image
                 src={'/logo.svg'}
@@ -161,9 +163,12 @@ const Home: NextPage = ({ topics }: any) => {
             </div>
             <div className="flex-grow">
               <div className="flex justify-end items-center gap-5">
+                <div className="flex justify-center items-center">
+                  <button className="bg-blue-400 text-white p-3 shadow-sm rounded-xl font-bold">Zacznij nowy temat</button>
+                </div>
                 <PointCounter />
                 <NotificationBell />
-                <Avatar />
+                <Avatar user={user} />
               </div>
             </div>
           </div>
@@ -178,7 +183,6 @@ const Home: NextPage = ({ topics }: any) => {
               <SideMenu />
             </div>
             <div className="w-full space-y-3 md:w-3/4 flex-col justify-center items-start">
-              <InputIdeaCard />
               <div className="space-y-3">
                 {
                   topics.map((topic: Topic) => {
@@ -197,8 +201,10 @@ const Home: NextPage = ({ topics }: any) => {
 }
 
 export async function getServerSideProps(context: any) {
+  let r, d = null;
+
   const fetchGlobalUser = async () => {
-    r = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST}/api/user?id=01GB3H6503G5N78AY0HZ7VB4TE`);
+    r = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST}/api/user?id=01GB63BZ8WX8E62WKW3AFDF93K`);
     d = await r.json()
     return d;
   }
@@ -218,14 +224,15 @@ export async function getServerSideProps(context: any) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST}/api/topic`)
   const data = await res.json()
 
-  let r, d = null;
-  for (let index = 0; index < data.length; index++) {
-    const element = data[index];
-    let comments = await fetchComments(element);
-    let author = await fetchUser(element);
-    element.comments = comments;
-    element.author = author;
-  }
+  // let r, d = null;
+  // for (let index = 0; index < data.length; index++) {
+  //   const element = data[index];
+  //   let comments = await fetchComments(element);
+  //   let author = await fetchUser(element);
+  //   element.comments = comments;
+  //   element.author = author;
+  //   console.log(element);
+  // }
 
   let user = await fetchGlobalUser();
 

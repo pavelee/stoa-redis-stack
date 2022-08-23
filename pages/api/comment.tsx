@@ -23,9 +23,14 @@ export default async function handler(
       if (!exists) {
         return res.status(404).json({});
       }
-      getdata = await repo.fetch(id as string);
+      getdata = [await repo.fetch(id as string)];
     } else {
       getdata = await s.return.all();
+    }
+    let response = [];
+    for (let index = 0; index < getdata.length; index++) {
+      const element = getdata[index];
+      response.push(await element.getData())
     }
     return res.status(200).json(getdata)
   }
@@ -50,7 +55,7 @@ export default async function handler(
     const postdata = await repo.createAndSave({
       content, topic, created: new Date()
     });
-    return res.status(200).json(postdata)
+    return res.status(200).json(await postdata.getData())
   }
 
   const handleDelte = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
@@ -79,7 +84,7 @@ export default async function handler(
         data.content = content;
       }
       repo.save(data);
-      return res.status(200).json(data)
+      return res.status(200).json(await data.getData())
     }
     return res.status(404).json({})
   }

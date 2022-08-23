@@ -2,8 +2,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Client, Repository } from 'redis-om';
 import { topicSchema } from '../../../entity/topic';
-import { userSchema } from '../../../entity/user';
+import { userSchema, build } from '../../../entity/user';
 import { commentSchema } from '../../../entity/comment';
+import { likeSchema } from '../../../entity/like';
+import { viewSchema } from '../../../entity/view';
 
 type Data = any;
 
@@ -30,12 +32,11 @@ export default async function handler(
 
     const userRepo = client.fetchRepository(userSchema);
     await resetAll(userRepo);
-    const pciosek = await createEntity(userRepo, {
-        username: 'pciosek',
-        name: 'Paweł Ciosek',
-        points: 23,
-        created: new Date(),
-    });    
+
+    const pciosek = await createEntity(userRepo, build(
+        'pciosek',
+        'Paweł Ciosek'
+    ));
 
     const topicRepo = client.fetchRepository(topicSchema);
     await resetAll(topicRepo);
@@ -43,6 +44,15 @@ export default async function handler(
         title: 'serious!',
         desc: 'We are serious!',
         author: pciosek.entityId,
+        created: new Date(),
+    });
+
+    const likeRepo = client.fetchRepository(likeSchema);
+    await resetAll(likeRepo);
+    const like = await createEntity(likeRepo, {
+        author: pciosek.entityId,
+        object: 'topic',
+        objectid: topic.entityId,
         created: new Date(),
     });
 

@@ -24,7 +24,7 @@ export default async function handler(
                 return res.status(404).json({});
             }
             getdata = await repo.fetch(id as string);
-            return res.status(200).json(getdata)
+            return res.status(200).json(await getdata.getData())
         }
         res.status(400).json({
             'error': 'Operation not allowed!'

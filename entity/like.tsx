@@ -2,20 +2,19 @@ import { Entity, Schema } from 'redis-om';
 import { getRedisClient } from '../services/redis';
 import { userSchema } from './user';
 
-export interface Comment {
-    content: string;
-    topic: string;
+export interface Like {
+    object: string;
+    objectid: string;
     author: string;
     created: Date;
     modified: Date;
 }
 
-export class Comment extends Entity {
+export class Like extends Entity {
     async getData() {
         let author = await this.getAuthor();
         return {
             id: this.entityId,
-            content: this.content,
             author: await author.getData(),
             created: this.created,
             modified: this.modified,
@@ -30,9 +29,9 @@ export class Comment extends Entity {
     }
 }
 
-export const commentSchema = new Schema(Comment, {
-    content: { type: 'string' },
-    topic: { type: 'string' },
+export const likeSchema = new Schema(Like, {
+    object: { type: 'string' },
+    objectid: { type: 'string' },
     author: { type: 'string' },
     created: { type: 'date' },
     modified: { type: 'date' },
