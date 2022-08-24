@@ -1,5 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { withIronSessionApiRoute } from 'iron-session/next/dist';
+import { withIronSessionApiRoute } from 'iron-session/next';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { commentSchema } from '../../entity/comment';
 import { getRedisClient, isEntityExist } from '../../services/redis';
