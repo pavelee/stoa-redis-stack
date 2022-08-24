@@ -1,14 +1,16 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { withIronSessionApiRoute } from 'iron-session/next'
+import { sessionOptions } from '../../services/session';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { topicSchema } from '../../entity/topic';
 import { getRedisClient, isEntityExist } from '../../services/redis';
 
 type Data = any
 
-export default async function handler(
+const handler = async (
   req: NextApiRequest,
   res: NextApiResponse<Data>
-) {
+) => {
   const entityName = 'Topic';
   let client = await getRedisClient();
   let repo = client.fetchRepository(topicSchema);
@@ -92,3 +94,5 @@ export default async function handler(
       })
   }
 }
+
+export default withIronSessionApiRoute(handler, sessionOptions);

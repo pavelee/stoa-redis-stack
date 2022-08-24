@@ -14,7 +14,6 @@ const resetAll = async (repo: any) => {
     const entites = await repo.search().return.all();
     for (let index = 0; index < entites.length; index++) {
         const entity = entites[index];
-        console.log(`removing topic: ${entity.entityId}`)
         repo.remove(entity.entityId)
     }
 }
