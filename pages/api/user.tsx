@@ -17,8 +17,11 @@ const handler = async (
     let method = req.method;
 
     const handleGet = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-        const { id } = req.query;
-        let s = repo.search();
+        let user = req.session.user;
+        let id = null;
+        if (user) {
+            id = user[0].entityId;
+        }
         let getdata;
         if (id) {
             const exists = await isEntityExist(client, entityName, id as string);
