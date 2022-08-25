@@ -17,6 +17,10 @@ const handler = async (
     let method = req.method;
 
     const handleGet = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+        // let getdata;
+        // getdata = await repo.search().where('username').eq('pciosek').return.all();
+        // return res.status(200).json(await getdata[0].getData())
+
         let user = req.session.user;
         let id = null;
         if (user) {
@@ -31,8 +35,8 @@ const handler = async (
             getdata = await repo.fetch(id as string);
             return res.status(200).json(await getdata.getData())
         }
-        res.status(400).json({
-            'error': 'Operation not allowed!'
+        res.status(401).json({
+            'error': 'Access dnied'
         })
     }
 

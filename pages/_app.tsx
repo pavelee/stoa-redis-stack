@@ -4,8 +4,10 @@ import type { AppProps } from 'next/app'
 import { Logo } from '../components/logo';
 import { PointCounter } from '../components/pointCounter';
 import { NotificationBell } from '../components/notificationBell';
-import { AvatarWrapper } from '../components/avatarWrapper';
 import { FunctionComponent } from 'react';
+import { useUser } from '../services/useUser';
+import { Avatar } from '../components/avatar';
+import Link from 'next/link';
 
 const UserInfo: FunctionComponent = ({ }) => {
   return (
@@ -36,6 +38,7 @@ const SideMenu: FunctionComponent = ({ }) => {
 }
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const { user } = useUser();
   return (
     <div>
       <Head>
@@ -57,7 +60,12 @@ function MyApp({ Component, pageProps }: AppProps) {
                   </div>
                   <PointCounter />
                   <NotificationBell notifications={[]} />
-                  <AvatarWrapper />
+                  {
+                    user && <Avatar user={user} />
+                  }
+                  {
+                    !user && <Link href={'/login'}><a className="bg-blue-200 p-2 rounded-xl shadow-sm">Sign in</a></Link>
+                  }
                 </div>
               </div>
             </div>

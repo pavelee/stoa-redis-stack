@@ -1,22 +1,23 @@
-import { useEffect, useState } from "react"
+// import { useEffect } from 'react'
+// import Router from 'next/router'
+// import useSWR from 'swr'
 
-export const useUser = () => {
-    const [user, setUser] = useState(null);
+// export function useUser() {
+//     const { data, error } = useSWR('/api/user', (url: any) => fetch(url).then(r => r.json()))
 
-    const fetchGlobalUser = async () => {
-        let r = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST}/api/user?id=01GB6631KMCW04WT2GXEEZVXAN`);
-        let d = await r.json()
-        return d;
-    }
+//     return {
+//         user: data && data.id ? data : null,
+//         isLoading: !error && !data,
+//         isError: error
+//     }
+// }
 
-    useEffect(() => {
-        const loadUser = async () => {
-            let u = await fetchGlobalUser();
-            setUser(u);
-        }
-        loadUser();
-    }, [])
+import { useEffect } from 'react'
+import Router from 'next/router'
+import useSWR from 'swr'
 
+export function useUser() {
+    const { data: user, mutate: mutateUser } = useSWR<any>('/api/user', (url: any) => fetch(url).then(r => r.json()))
 
-    return { user };
+    return { user: user && user.id ? user : null, mutateUser }
 }

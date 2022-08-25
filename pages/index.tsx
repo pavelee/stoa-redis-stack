@@ -8,8 +8,10 @@ import { Logo } from '../components/logo';
 import { PointCounter } from '../components/pointCounter';
 import { NotificationBell } from '../components/notificationBell';
 import { Avatar } from '../components/avatar';
-import { AvatarWrapper } from '../components/avatarWrapper';
 import { IdeaCard } from '../components/ideacard';
+import { withIronSessionSsr } from 'iron-session/next';
+import { sessionOptions } from '../services/session';
+import { useUser } from '../services/useUser';
 
 const InputIdeaCard: FunctionComponent<{ placeholder: string }> = ({ placeholder = "What's on your mind?" }) => {
   return (
@@ -29,7 +31,7 @@ const Home: NextPage = ({ topics, user }: any) => {
         {
           topics.map((topic: Topic) => {
             return (
-              <IdeaCard key={topic.entityId} topic={topic} />
+              <IdeaCard key={topic.entityId} topic={topic} user={user} />
             );
           })
         }
@@ -38,16 +40,25 @@ const Home: NextPage = ({ topics, user }: any) => {
   )
 }
 
-export async function getServerSideProps(context: any) {
+export const getServerSideProps = withIronSessionSsr(async function ({
+  req,
+  res,
+}) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST}/api/topic`)
+  const data = await response.json()
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST}/api/topic`)
-  const data = await res.json()
+  let user = null;
+  if (req.session.user) {
+    user = req.session.user;
+  }
 
   return {
     props: {
+      user: user,
       topics: data,
     }, // will be passed to the page component as props
   }
-}
+},
+  sessionOptions)
 
 export default Home

@@ -4,7 +4,7 @@ import { Topic } from "../entity/topic"
 import { Avatar } from "./avatar"
 import Link from 'next/link';
 
-export const IdeaCard: FunctionComponent<{ topic: any }> = ({ topic }) => {
+export const IdeaCard: FunctionComponent<{ topic: any, user: any }> = ({ topic, user }) => {
 
     return (
         <div className="bg-white shadow-xl rounded-lg cursor-pointer p-5">
