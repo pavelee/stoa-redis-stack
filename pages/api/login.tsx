@@ -3,14 +3,27 @@ import { sessionOptions } from '../../services/session'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getRedisClient } from '../../services/redis';
 import { userSchema } from '../../entity/user';
+import { build } from '../../entity/user';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { username } = await req.body
+    const { name } = await req.body
 
     try {
         let client = await getRedisClient();
         let repo = client.fetchRepository(userSchema);
-        let user = await repo.search().where('username').eq(username).return.all();
+        let user = await repo.search().where('name').eq(name).return.first();
+
+        // on prototype purpose, create user with new name
+        if (!user) {
+            let newuserpayload = build(
+                `user_${Math.floor(Math.random() * 1000 * 1000 * 1000)}`,
+                name
+            );
+            let client = await getRedisClient();
+            let repo = client.fetchRepository(userSchema);
+            let newuser = await repo.createAndSave(newuserpayload);
+            user = newuser;
+        }
 
         req.session.user = user
         await req.session.save()

@@ -4,12 +4,14 @@ import type { AppProps } from 'next/app'
 import { Logo } from '../components/logo';
 import { PointCounter } from '../components/pointCounter';
 import { NotificationBell } from '../components/notificationBell';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useState } from 'react';
 import { useUser } from '../services/useUser';
 import { Avatar } from '../components/avatar';
 import Link from 'next/link';
+import { logout } from '../services/api';
+import Router from 'next/router'
 
-const UserInfo: FunctionComponent = ({ }) => {
+const UserInfo: FunctionComponent<{ user: any }> = ({ user }) => {
   return (
     <div className="bg-white flex justify-center items-center rounded-xl shadow-xl p-5">
       <div className="flex-col">
@@ -20,7 +22,7 @@ const UserInfo: FunctionComponent = ({ }) => {
           </div>
         </div>
         <div className="text-center text-2xl">
-          Paweł Ciosek
+          { user.name }
         </div>
       </div>
     </div>
@@ -37,7 +39,33 @@ const SideMenu: FunctionComponent = ({ }) => {
   )
 }
 
+const AvatarMenu: FunctionComponent<{user: any, doLogout: any}> = ({ user, doLogout }) => {
+  const [isShowMenu, setIsShowMenu] = useState(false);
+  return (<>
+    {
+      user &&
+      <div className="relative">
+        <div onClick={() => { setIsShowMenu(!isShowMenu); }}>
+          <Avatar user={user} />
+        </div>
+        <div className={'bg-white p-5 border rounded-xl -left-10 border-black absolute ' + (!isShowMenu ? 'hidden' : '')}>
+          <div className="text-blue-600 cursor-pointer" onClick={() => { doLogout() }}>singout</div>
+        </div>
+      </div>
+    }
+    {
+      !user && <Link href={'/login'}><a className="bg-blue-200 p-2 rounded-xl shadow-sm">Sign in</a></Link>
+    }
+  </>)
+}
+
 function MyApp({ Component, pageProps }: AppProps) {
+
+  const doLogout = async () => {
+    await logout();
+    Router.reload();
+  }
+
   const { user } = useUser();
   return (
     <div>
@@ -60,12 +88,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                   </div>
                   <PointCounter />
                   <NotificationBell notifications={[]} />
-                  {
-                    user && <Avatar user={user} />
-                  }
-                  {
-                    !user && <Link href={'/login'}><a className="bg-blue-200 p-2 rounded-xl shadow-sm">Sign in</a></Link>
-                  }
+                  <AvatarMenu user={user} doLogout={doLogout} />
                 </div>
               </div>
             </div>
@@ -75,7 +98,12 @@ function MyApp({ Component, pageProps }: AppProps) {
           <div className="container mx-auto">
             <div className="flex gap-3">
               <div className="hidden md:block md:w-1/4 flex justify-center">
-                <UserInfo />
+                {user && <UserInfo user={user} />}
+                <div className="bg-white flex justify-center items-center p-5">
+                  {
+                    !user && <Link href={'/login'}><a className="bg-blue-200 p-2 rounded-xl shadow-sm">Sign in</a></Link>
+                  }
+                </div>
                 <div className="h-3"></div>
                 <SideMenu />
               </div>

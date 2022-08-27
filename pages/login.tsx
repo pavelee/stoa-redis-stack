@@ -4,7 +4,7 @@ import { useUser } from "../services/useUser";
 import Router from 'next/router'
 
 const LoginPage: NextPage = () => {
-    const [username, setUsername] = useState('');
+    const [name, setName] = useState('');
 
     const { user, mutateUser } = useUser()
 
@@ -18,10 +18,8 @@ const LoginPage: NextPage = () => {
     const signin = async (ev: FormEvent<any>) => {
         ev.preventDefault();
 
-        console.log(username);
-
         const body = {
-            username: username,
+            name: name,
         }
 
         try {
@@ -41,7 +39,7 @@ const LoginPage: NextPage = () => {
         <div className="flex justify-center">
             <form className="" onSubmit={async (ev) => { await signin(ev); }}>
                 <div>
-                    <input type="text" onChange={(ev) => { setUsername(ev.target.value) }} />
+                    <input required type="text" onChange={(ev) => { setName(ev.target.value) }} />
                 </div>
                 <div>
                     <input type="submit" />
