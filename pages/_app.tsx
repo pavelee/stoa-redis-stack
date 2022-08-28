@@ -80,7 +80,6 @@ function MyApp({ Component, pageProps }: AppProps) {
               </div>
               <div className="flex-grow">
                 <div className="flex justify-end items-center gap-5">
-                  <PointCounter />
                   <NotificationBell notifications={[]} />
                   <AvatarMenu user={user} doLogout={doLogout} />
                 </div>
