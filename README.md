@@ -1,64 +1,43 @@
 # Stoa
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/pavelee/stoa/main/public/app_icon_256.png">
+  <img src="https://raw.githubusercontent.com/pavelee/stoa-redis-stack/main/public/dashboard.png">
 </p>
 
-@TODO
+Stoa is a small forum app. The inspiration is a need of minimalistic internal forum for organizations. Designed to look like a typical social media app.
 
-# Overview video (Optional)
+The main purpose of the project is to test redis as main database. I am using redisJSON to store documents and RediSearch to perform searches.
 
-Here's a short video that explains the project and how it uses Redis:
+Stack:
 
-[Insert your own video here, and remove the one below]
-
-[![Embed your YouTube video](https://i.ytimg.com/vi/vyxdC1qK4NE/maxresdefault.jpg)](https://www.youtube.com/watch?v=vyxdC1qK4NE)
+* Typescript
+* Next.js
+* tailwindcss
+* Redis stack
 
 ## How it works
 
 ### How the data is stored:
 
-Refer to [this example](https://github.com/redis-developer/basic-analytics-dashboard-redis-bitmaps-nodejs#how-the-data-is-stored) for a more detailed example of what you need for this section.
+Data is stored as documents using redisJSON
 
 ### How the data is accessed:
 
-Refer to [this example](https://github.com/redis-developer/basic-analytics-dashboard-redis-bitmaps-nodejs#how-the-data-is-accessed) for a more detailed example of what you need for this section.
-
-### Performance Benchmarks
-
-[If you migrated an existing app to use Redis, please put performance benchmarks here to show the performance improvements.]
+Data is accesed through [redis-om-node](https://github.com/redis/redis-om-node)
 
 ## How to run it locally?
 
-[Make sure you test this with a fresh clone of your repo, these instructions will be used to judge your app.]
+You can run it loccaly using docker.
 
 ### Prerequisites
 
-[Fill out with any prerequisites (e.g. Node, Docker, etc.). Specify minimum versions]
+* Docker
 
 ### Local installation
 
-[Insert instructions for local installation]
-
-## Deployment
-
-To make deploys work, you need to create free account on [Redis Cloud](https://redis.info/try-free-dev-to)
-
-### Google Cloud Run
-
-[Insert Run on Google button](https://cloud.google.com/blog/products/serverless/introducing-cloud-run-button-click-to-deploy-your-git-repos-to-google-cloud)
-
-### Heroku
-
-[Insert Deploy on Heroku button](https://devcenter.heroku.com/articles/heroku-button)
-
-### Netlify
-
-[Insert Deploy on Netlify button](https://www.netlify.com/blog/2016/11/29/introducing-the-deploy-to-netlify-button/)
-
-### Vercel
-
-[Insert Deploy on Vercel button](https://vercel.com/docs/deploy-button)
+```
+docker-compose up -d
+```
 
 ## More Information about Redis Stack
 
