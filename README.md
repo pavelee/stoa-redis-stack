@@ -35,8 +35,16 @@ You can run it loccaly using docker.
 
 ### Local installation
 
+Run containers
+
 ```
 docker-compose up -d
+```
+
+Acess app in the borwser
+
+```
+http://localhost:3000
 ```
 
 ## More Information about Redis Stack
