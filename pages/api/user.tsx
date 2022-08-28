@@ -22,7 +22,6 @@ const handler = async (
         // return res.status(200).json(await getdata[0].getData())
 
         let user = req.session.user;
-        console.log(user);
         let id = null;
         if (user) {
             id = user.entityId;

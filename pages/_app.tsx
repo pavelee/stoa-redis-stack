@@ -74,7 +74,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="icon" type="image/x-icon" href="/favicon.ico"></link>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
-      <div className="h-screen">
+      <div className="h-screen min-h-full">
         <div className="bg-white">
           <div className="container mx-auto p-3">
             <div className="flex rounded-b-sm w-full items-center">

@@ -92,21 +92,20 @@ const handler = async (
   }
 
   const handleDelte = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-    const { id } = req.body;
+    const { object, objectid } = req.body;
     let user = req.session.user;
     if (!user) {
       return res.status(401).json({ error: 'Not authorized' });
     }
-    if (id) {
-      const exists = await isEntityExist(client, entityName, id as string);
-      if (!exists) {
+    if (object && objectid && user) {
+      let like = await repo.search().where('object').eq(object as string).where('objectid').eq(objectid as string).where('author').eq(user.entityId).return.first();
+      if (!like) {
         return res.status(404).json({});
       }
-      let like = await repo.fetch(id as string);
       if (user.entityId !== like.author) {
         return res.status(400).json({ error: 'It have to owner of like to remove it' })
       }
-      repo.remove(id as string);
+      repo.remove(like.entityId);
     }
     return res.status(200).json({});
   }

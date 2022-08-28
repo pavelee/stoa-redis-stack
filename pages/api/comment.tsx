@@ -2,6 +2,7 @@
 import { withIronSessionApiRoute } from 'iron-session/next';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { commentSchema } from '../../entity/comment';
+import { topicSchema } from '../../entity/topic';
 import { getRedisClient, isEntityExist } from '../../services/redis';
 import { sessionOptions } from '../../services/session';
 
@@ -38,24 +39,44 @@ const handler = async (
   }
 
   const handlePost = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-    const { content, topic } = req.body;
+    const { content, object, objectid } = req.body;
+    let user = req.session.user;
+    if (!user) {
+      return res.status(401).json({ error: 'Not authorized' });
+    }
     if (!content) {
       return res.status(400).json({
         'error': 'content parametr required'
       })
     }
-    if (!topic) {
+    if (!object) {
       return res.status(400).json({
-        'error': 'topic parametr required'
+        'error': 'object parametr required'
       })
     }
-    if (!await isEntityExist(client, 'Topic', topic)) {
+    if (!objectid) {
       return res.status(400).json({
-        'error': 'topic dosent exists'
+        'error': 'object parametr required'
       })
+    }
+    // cut request if object dosent exists
+    switch (object) {
+      case 'topic':
+        let topicRepo = client.fetchRepository(topicSchema);
+        let topic = topicRepo.fetch(objectid);
+        if (!topic) {
+          return res.status(400).json({
+            error: 'topic dosent exists'
+          });
+        }
+        break;
+      default:
+        return res.status(400).json({
+          error: 'object not supported'
+        })
     }
     const postdata = await repo.createAndSave({
-      content, topic, created: new Date()
+      content, object, objectid, author: user.entityId, created: new Date()
     });
     return res.status(200).json(await postdata.getData())
   }

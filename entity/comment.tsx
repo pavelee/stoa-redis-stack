@@ -3,8 +3,9 @@ import { getRedisClient } from '../services/redis';
 import { userSchema } from './user';
 
 export interface Comment {
+    object: string;
+    objectid: string;
     content: string;
-    topic: string;
     author: string;
     created: Date;
     modified: Date;
@@ -17,8 +18,8 @@ export class Comment extends Entity {
             id: this.entityId,
             content: this.content,
             author: await author.getData(),
-            created: this.created,
-            modified: this.modified,
+            created: JSON.parse(JSON.stringify(this.created)),
+            modified: JSON.parse(JSON.stringify(this.modified)),
         }
     }
 
@@ -31,8 +32,9 @@ export class Comment extends Entity {
 }
 
 export const commentSchema = new Schema(Comment, {
+    object: { type: 'string' },
+    objectid: { type: 'string' },
     content: { type: 'string' },
-    topic: { type: 'string' },
     author: { type: 'string' },
     created: { type: 'date' },
     modified: { type: 'date' },

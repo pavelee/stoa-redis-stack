@@ -16,8 +16,8 @@ export class Like extends Entity {
         return {
             id: this.entityId,
             author: await author.getData(),
-            created: this.created,
-            modified: this.modified,
+            created: JSON.parse(JSON.stringify(this.created)),
+            modified: JSON.parse(JSON.stringify(this.modified)),
         }
     }
 

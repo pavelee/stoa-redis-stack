@@ -17,8 +17,8 @@ export class User extends Entity {
             name: this.name,
             avatar: this.avatar,
             points: this.points,
-            created: this.created,
-            modified: this.modified,
+            created: JSON.parse(JSON.stringify(this.created)),
+            modified: JSON.parse(JSON.stringify(this.modified)),
         }
     }
 }

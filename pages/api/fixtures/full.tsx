@@ -59,13 +59,15 @@ export default async function handler(
     await resetAll(commentRepo);
     await createEntity(commentRepo, {
         content: 'ala ma kota!',
-        topic: topic.entityId,
+        object: 'topic',
+        objectid: topic.entityId,
         author: pciosek.entityId,
         created: new Date(),
     });
     await createEntity(commentRepo, {
         content: 'moj komentarz!',
-        topic: topic.entityId,
+        object: 'topic',
+        objectid: topic.entityId,
         author: pciosek.entityId,
         created: new Date(),
     });

@@ -3,11 +3,12 @@ import { NextPage } from "next";
 import { IdeaCard } from "../../components/ideacard";
 import { sessionOptions } from "../../services/session";
 import { useRouter } from 'next/router'
+import { fetchData } from "../../entity/topic";
 
 const TopicPage: NextPage = ({ topic, user }: any) => {
     return (
         <>
-            <IdeaCard topic={topic} user={user} />
+            <IdeaCard t={topic} u={user} />
         </>
     )
 }
@@ -17,10 +18,8 @@ export const getServerSideProps = withIronSessionSsr(async function ({
     res,
 }) {
     let splited = req.url.split('/');
-    console.log(splited[2]);
     const id = splited[2];
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST}/api/topic?id=${id}`)
-    const data = await response.json()
+    const data = await fetchData(id, req.session.user);
 
     let user = null;
     if (req.session.user) {
@@ -30,7 +29,7 @@ export const getServerSideProps = withIronSessionSsr(async function ({
     return {
         props: {
             user: user,
-            topic: data ? data[0] : null,
+            topic: data,
         }, // will be passed to the page component as props
     }
 },

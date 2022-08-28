@@ -2,6 +2,7 @@ import { NextPage } from "next";
 import { FormEvent, useEffect, useState } from "react";
 import { useUser } from "../services/useUser";
 import Router from 'next/router'
+import { login } from "../services/api";
 
 const LoginPage: NextPage = () => {
     const [name, setName] = useState('');
@@ -18,17 +19,9 @@ const LoginPage: NextPage = () => {
     const signin = async (ev: FormEvent<any>) => {
         ev.preventDefault();
 
-        const body = {
-            name: name,
-        }
-
         try {
             mutateUser(
-                await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body),
-                })
+                await login(name)
             )
         } catch (error) {
             console.error('An unexpected error happened:', error)

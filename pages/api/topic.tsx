@@ -2,7 +2,7 @@
 import { withIronSessionApiRoute } from 'iron-session/next'
 import { sessionOptions } from '../../services/session';
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { topicSchema } from '../../entity/topic';
+import { fetchData, topicSchema } from '../../entity/topic';
 import { getRedisClient, isEntityExist } from '../../services/redis';
 
 type Data = any
@@ -18,21 +18,15 @@ const handler = async (
 
   const handleGet = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     const { id } = req.query;
-    let s = repo.search();
-    let getdata;
-    if (id) {
-      const exists = await isEntityExist(client, entityName, id as string);
-      if (!exists) {
-        return res.status(404).json({});
+    let user = req.session.user;
+    let response = {};
+    try {
+      response = await fetchData(id as string, user);
+    } catch (e) {
+      if (e.message === 'Not Found') {
+        return res.status(404).json({ error: 'Not Found' });
       }
-      getdata = [await repo.fetch(id as string)];
-    } else {
-      getdata = await s.return.all();
-    }
-    let response = [];
-    for (let index = 0; index < getdata.length; index++) {
-      const element = getdata[index];
-      response.push(await element.getData())
+      return res.status(400).json({})
     }
     return res.status(200).json(response)
   }

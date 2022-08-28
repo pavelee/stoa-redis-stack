@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { FunctionComponent } from 'react';
 import { FiBell } from 'react-icons/fi'
 import { FcLikePlaceholder } from 'react-icons/fc';
-import { Topic } from '../entity/topic';
+import { fetchData, Topic } from '../entity/topic';
 import { Logo } from '../components/logo';
 import { PointCounter } from '../components/pointCounter';
 import { NotificationBell } from '../components/notificationBell';
@@ -12,6 +12,7 @@ import { IdeaCard } from '../components/ideacard';
 import { withIronSessionSsr } from 'iron-session/next';
 import { sessionOptions } from '../services/session';
 import { useUser } from '../services/useUser';
+import { getTopic } from '../services/api';
 
 const InputIdeaCard: FunctionComponent<{ placeholder: string }> = ({ placeholder = "What's on your mind?" }) => {
   return (
@@ -31,7 +32,7 @@ const Home: NextPage = ({ topics, user }: any) => {
         {
           topics.map((topic: Topic) => {
             return (
-              <IdeaCard key={topic.entityId} topic={topic} user={user} />
+              <IdeaCard key={topic.entityId} t={topic} u={user} />
             );
           })
         }
@@ -44,13 +45,12 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   req,
   res,
 }) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST}/api/topic`)
-  const data = await response.json()
-
   let user = null;
   if (req.session.user) {
     user = req.session.user;
   }
+
+  let data = await fetchData(null, user);
 
   return {
     props: {
