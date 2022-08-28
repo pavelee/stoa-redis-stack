@@ -120,7 +120,7 @@ export const IdeaCard: FunctionComponent<{ t: any, u: any }> = ({ t, u }) => {
             </div>
             <div className="flex gap-3 mt-3">
                 <div>
-                    <p>{topic.desc}</p>
+                    <p>{topic.content}</p>
                 </div>
             </div>
             <div className="flex flex-row gap-3 mt-3 text-gray-500">

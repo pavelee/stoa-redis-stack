@@ -33,16 +33,16 @@ const handler = async (
   }
 
   const handlePost = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-    const { desc } = req.body;
+    const { content } = req.body;
     let user = req.session.user;
     if (!user) {
       return res.status(401).json({ error: 'Not authorized' });
     }
-    if (!desc) {
-      return res.status(400).json({ error: 'desc parameter required' });
+    if (!content) {
+      return res.status(400).json({ error: 'content parameter required' });
     }
     const postdata = await repo.createAndSave({
-      desc, author: user.entityId, created: new Date()
+      content, author: user.entityId, created: new Date()
     });
     return res.status(200).json(await postdata.getData())
   }
@@ -61,7 +61,7 @@ const handler = async (
 
   const handlePut = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     const { id } = req.query;
-    const { title, desc } = req.body;
+    const { content } = req.body;
     if (id) {
       const exists = await isEntityExist(client, entityName, id as string);
       if (!exists) {
@@ -69,11 +69,8 @@ const handler = async (
       }
       let data = await repo.fetch(id as string);
       data.modified = new Date();
-      if (title) {
-        data.title = title;
-      }
-      if (desc) {
-        data.desc = desc;
+      if (content) {
+        data.content = content;
       }
       repo.save(data);
       return res.status(200).json(await data.getData())

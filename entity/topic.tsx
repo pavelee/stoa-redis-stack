@@ -5,8 +5,7 @@ import { User, userSchema } from './user';
 import { likeSchema } from './like';
 
 export interface Topic {
-    title: string;
-    desc: string;
+    content: string;
     author: string;
     created: Date;
     modified: Date;
@@ -41,8 +40,7 @@ export class Topic extends Entity {
         }
         return {
             id: this.entityId,
-            title: this.title,
-            desc: this.desc,
+            content: this.content,
             comments: commentsData,
             likes: likeData,
             author: await author.getData(),
@@ -81,8 +79,7 @@ export class Topic extends Entity {
 }
 
 export const topicSchema = new Schema(Topic, {
-    title: { type: 'string' },
-    desc: { type: 'string' },
+    content: { type: 'string' },
     author: { type: 'string' },
     created: { type: 'date' },
     modified: { type: 'date' },

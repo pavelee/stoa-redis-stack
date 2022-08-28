@@ -20,9 +20,9 @@ export const logout = async () => {
     return d;
 }
 
-export const addTopic = async (desc: string) => {
+export const addTopic = async (content: string) => {
     const body = {
-        desc
+        content
     }
     let r = await fetch('/api/topic', {
         method: 'POST',
