@@ -20,6 +20,19 @@ export const logout = async () => {
     return d;
 }
 
+export const addTopic = async (desc: string) => {
+    const body = {
+        desc
+    }
+    let r = await fetch('/api/topic', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+    })
+    let d = await r.json()
+    return d;
+}
+
 export const getTopics = async () => {
     let r = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST}/api/topic`)
     let d = await r.json();

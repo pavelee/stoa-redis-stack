@@ -22,7 +22,7 @@ const UserInfo: FunctionComponent<{ user: any }> = ({ user }) => {
           </div>
         </div>
         <div className="text-center text-2xl">
-          { user.name }
+          {user.name}
         </div>
       </div>
     </div>
@@ -39,7 +39,7 @@ const SideMenu: FunctionComponent = ({ }) => {
   )
 }
 
-const AvatarMenu: FunctionComponent<{user: any, doLogout: any}> = ({ user, doLogout }) => {
+const AvatarMenu: FunctionComponent<{ user: any, doLogout: any }> = ({ user, doLogout }) => {
   const [isShowMenu, setIsShowMenu] = useState(false);
   return (<>
     {
@@ -84,7 +84,11 @@ function MyApp({ Component, pageProps }: AppProps) {
               <div className="flex-grow">
                 <div className="flex justify-end items-center gap-5">
                   <div className="flex justify-center items-center">
-                    <button className="bg-blue-400 text-white p-3 shadow-sm rounded-xl font-bold">Zacznij nowy temat</button>
+                    <Link
+                      href={'/newtopic'}
+                    >
+                      <button className="bg-blue-400 text-white p-3 shadow-sm rounded-xl font-bold">New thread</button>
+                    </Link>
                   </div>
                   <PointCounter />
                   <NotificationBell notifications={[]} />

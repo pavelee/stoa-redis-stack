@@ -24,6 +24,7 @@ const handler = async (
       response = await fetchData(id as string, user);
     } catch (e) {
       if (e.message === 'Not Found') {
+        req.session.destroy(); // logout if was logged
         return res.status(404).json({ error: 'Not Found' });
       }
       return res.status(400).json({})
@@ -32,9 +33,16 @@ const handler = async (
   }
 
   const handlePost = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-    const { title, desc } = req.body;
+    const { desc } = req.body;
+    let user = req.session.user;
+    if (!user) {
+      return res.status(401).json({ error: 'Not authorized' });
+    }
+    if (!desc) {
+      return res.status(400).json({ error: 'desc parameter required' });
+    }
     const postdata = await repo.createAndSave({
-      title, desc, created: new Date()
+      desc, author: user.entityId, created: new Date()
     });
     return res.status(200).json(await postdata.getData())
   }
