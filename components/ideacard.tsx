@@ -4,6 +4,7 @@ import { Topic } from "../entity/topic"
 import { Avatar } from "./avatar"
 import Link from 'next/link';
 import { addComment, addLike, getLike, getTopic, removeLike } from "../services/api";
+import moment from 'moment';
 
 export const ReactionList: FunctionComponent<{ reactions: any, reactionName: string, isShow: boolean, setIsShow: any }> = ({ reactions, reactionName, isShow, setIsShow }) => {
     return (
@@ -20,7 +21,7 @@ export const ReactionList: FunctionComponent<{ reactions: any, reactionName: str
                             {reaction.author.name}
                         </div>
                         <div className="text-gray-400">
-                            {reaction.created}
+                            {moment(reaction.created).fromNow()}
                         </div>
                     </div>
                 ))}
@@ -52,7 +53,7 @@ export const Comment: FunctionComponent<{ comment: any, toggleLike: any }> = ({ 
                 </div>
             </div>
             <div className="text-gray-400 text-sm absolute right-5">
-                {comment.created}
+                {moment(comment.created).fromNow()}
             </div>
         </div >
     )
@@ -113,7 +114,7 @@ export const IdeaCard: FunctionComponent<{ t: any, u: any }> = ({ t, u }) => {
                             href={`/topic/${topic.id}`}
                         >
                             <a className="bg-blue-100 p-1 rounded-xl shadow-sm">
-                                {topic.created}
+                                {moment(topic.created).fromNow()}
                             </a>
                         </Link>
                     </div>
@@ -165,7 +166,7 @@ export const IdeaCard: FunctionComponent<{ t: any, u: any }> = ({ t, u }) => {
                 {
                     u && <div className="flex gap-3 justify-center items-center">
                         <Avatar user={u} />
-                        <textarea onChange={(ev) => { setUserComment(ev.target.value) }} className="bg-gray-100 flex-auto rounded-sm shadow-sm p-3"></textarea>
+                        <textarea onChange={(ev) => { setUserComment(ev.target.value) }} className="bg-gray-100 flex-auto rounded-sm shadow-sm p-3 placeholder-gray-400" placeholder="write a reply"></textarea>
                         <button onClick={() => { doComment(userComment) }} className="bg-blue-200 p-3 rounded-xl shadow-sm">comment</button>
                     </div>
                 }

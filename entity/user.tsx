@@ -1,4 +1,5 @@
-import { Entity, Schema } from 'redis-om';
+import { Entity, Repository, Schema } from 'redis-om';
+import { getRedisClient } from '../services/redis';
 
 export interface User {
     username: string;
@@ -31,6 +32,13 @@ export const userSchema = new Schema(User, {
     created: { type: 'date' },
     modified: { type: 'date' },
 })
+
+export const getRepo = async (): Promise<Repository<User>> => {
+    let client = await getRedisClient();
+    let repo = client.fetchRepository(userSchema);
+    await repo.createIndex();
+    return repo;
+}
 
 export const build = (username: string, name: string) => {
     return {

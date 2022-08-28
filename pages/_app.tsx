@@ -10,33 +10,25 @@ import { Avatar } from '../components/avatar';
 import Link from 'next/link';
 import { logout } from '../services/api';
 import Router from 'next/router'
+import { withIronSessionSsr } from 'iron-session/next';
+import { sessionOptions } from '../services/session';
 
 const UserInfo: FunctionComponent<{ user: any }> = ({ user }) => {
   return (
     <div className="bg-white flex justify-center items-center rounded-xl shadow-xl p-5">
       <div className="flex-col">
-        <div className="cursor-pointer">
+        <div className="cursor-pointer flex justify-center">
           <div className="bg-neutral-focus text-neutral-content w-36 h-36">
             {/* <span className="text-xl">{text}</span> */}
             <img className="rounded-full" src="https://placeimg.com/300/300/animals" />
           </div>
         </div>
-        <div className="text-center text-2xl">
+        <div className="text-center mt-3 text-xl">
           {user.name}
         </div>
       </div>
     </div>
   );
-}
-
-const SideMenu: FunctionComponent = ({ }) => {
-  return (
-    <ul className="bg-white rounded-xl p-5">
-      <li><a>Item 1</a></li>
-      <li><a>Item 2</a></li>
-      <li><a>Item 3</a></li>
-    </ul >
-  )
 }
 
 const AvatarMenu: FunctionComponent<{ user: any, doLogout: any }> = ({ user, doLogout }) => {
@@ -60,13 +52,14 @@ const AvatarMenu: FunctionComponent<{ user: any, doLogout: any }> = ({ user, doL
 }
 
 function MyApp({ Component, pageProps }: AppProps) {
-
+  console.log(pageProps);
   const doLogout = async () => {
     await logout();
     Router.reload();
   }
 
-  const { user } = useUser();
+  // const { user } = useUser();
+  const user = pageProps.user;
   return (
     <div>
       <Head>
@@ -100,13 +93,11 @@ function MyApp({ Component, pageProps }: AppProps) {
             <div className="flex gap-3">
               <div className="hidden md:block md:w-1/4 flex justify-center">
                 {user && <UserInfo user={user} />}
-                <div className="bg-white flex justify-center items-center p-5">
-                  {
-                    !user && <Link href={'/login'}><a className="bg-blue-200 p-2 rounded-xl shadow-sm">Sign in</a></Link>
-                  }
-                </div>
-                <div className="h-3"></div>
-                <SideMenu />
+                {
+                  !user && <div className="bg-white flex justify-center items-center p-5">
+                    <Link href={'/login'}><a className="bg-blue-200 p-2 rounded-xl shadow-sm">Sign in</a></Link>
+                  </div>
+                }
               </div>
               <div className="w-full space-y-3 md:w-3/4 flex-col justify-center items-start">
                 <Component {...pageProps} />
@@ -118,24 +109,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       </div>
     </div>
   );
-}
-
-export async function getServerSideProps(context: any) {
-  let r, d = null;
-
-  const fetchGlobalUser = async () => {
-    r = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST}/api/user?id=01GB63BZ8WX8E62WKW3AFDF93K`);
-    d = await r.json()
-    return d;
-  }
-
-  let user = await fetchGlobalUser();
-
-  return {
-    props: {
-      user: user,
-    }, // will be passed to the page component as props
-  }
 }
 
 export default MyApp
