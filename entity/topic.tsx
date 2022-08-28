@@ -102,7 +102,7 @@ export const fetchData = async (id: string | null = null, user: User | null = nu
         getdata = await repo.fetch(id as string);
         return await getdata.getData(user);
     } else {
-        getdata = await s.return.all();
+        getdata = await s.sortDesc('created').all()
     }
     let response = [];
     for (let index = 0; index < getdata.length; index++) {
