@@ -20,7 +20,7 @@ export class Topic extends Entity {
         let commentsData = [];
         for (let index = 0; index < comments.length; index++) {
             const element = comments[index];
-            commentsData.push(await element.getData());
+            commentsData.push(await element.getData(user));
         }
         let likes = await this.getLikes();
         let likeData = [];

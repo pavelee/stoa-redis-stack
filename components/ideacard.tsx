@@ -5,24 +5,64 @@ import { Avatar } from "./avatar"
 import Link from 'next/link';
 import { addComment, addLike, getLike, getTopic, removeLike } from "../services/api";
 
+export const ReactionList: FunctionComponent<{ reactions: any, reactionName: string, isShow: boolean, setIsShow: any }> = ({ reactions, reactionName, isShow, setIsShow }) => {
+    return (
+        <div>
+            <span onClick={() => { setIsShow(!isShow) }}>{reactions.length} {reactionName}</span>
+            <div className={'z-50 bg-white border border-gray-200 rounded-xl shadow-sm absolute flex flex-col gap-3 p-3 w-80 overflow-scroll max-h-64 ' + (!isShow ? 'hidden' : '')}>
+                <div onClick={() => { setIsShow(false); }} className="text-right h-2">x</div>
+                {reactions.map((reaction: any) => (
+                    <div className="flex gap-3 justify-center items-center">
+                        <div>
+                            <Avatar user={reaction.author} />
+                        </div>
+                        <div>
+                            {reaction.author.name}
+                        </div>
+                        <div className="text-gray-400">
+                            {reaction.created}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
+}
+
+export const Comment: FunctionComponent<{ comment: any, toggleLike: any }> = ({ comment, toggleLike }) => {
+    const [isShowLikes, setIsShowLikes] = useState(false);
+    return (
+        <div className="flex gap-1 p-3 relative" >
+            <div className="flex">
+                <Avatar user={comment.author} />
+            </div>
+            <div className="flex-auto">
+                <div className="bg-gray-200 rounded-lg p-3">
+                    <div className="font-bold">{comment.author.name}</div>
+                    <div>{comment.content}</div>
+                </div>
+                <div className="flex gap-2">
+                    <div className="text-2xl" onClick={() => { toggleLike(comment) }}>
+                        {!comment.isLiked && <FcLikePlaceholder />}
+                        {comment.isLiked && <FcLike />}
+                    </div>
+                    <div>
+                        <ReactionList reactions={comment.likes} reactionName={'likes'} isShow={isShowLikes} setIsShow={setIsShowLikes} />
+                    </div>
+                </div>
+            </div>
+            <div className="text-gray-400 text-sm absolute right-5">
+                {comment.created}
+            </div>
+        </div >
+    )
+}
+
 export const IdeaCard: FunctionComponent<{ t: any, u: any }> = ({ t, u }) => {
     const [topic, setTopic] = useState(t);
     const [isShowLikes, setIsShowLikes] = useState(false);
+    const [isShowComments, setIsShowComments] = useState(false);
     const [userComment, setUserComment] = useState('');
-    // const [isLiked, setIsLiked] = useState(null);
-
-    // const isTopicAlreadyLiked = async (topic: any) => {
-    //     let like = await getLike('topic', topic.entityId);
-    //     // console.log(like, like && like.objectid === topic.id);,
-    //     setIsLiked(like && like.objectid === topic.id);
-    // }
-
-    // useEffect(() => {
-    //     const loadIsTopicAlreadyLiked = async () => {
-    //         await isTopicAlreadyLiked(topic);
-    //     };
-    //     loadIsTopicAlreadyLiked();
-    // }, [])
 
     const toggleLike = async () => {
         if (topic.isLiked) {
@@ -30,6 +70,16 @@ export const IdeaCard: FunctionComponent<{ t: any, u: any }> = ({ t, u }) => {
             await refreshTopic();
         } else {
             await addLike('topic', topic.id);
+            await refreshTopic();
+        }
+    }
+
+    const toggleLikeComment = async (comment: any) => {
+        if (comment.isLiked) {
+            await removeLike('comment', comment.id);
+            await refreshTopic();
+        } else {
+            await addLike('comment', comment.id);
             await refreshTopic();
         }
     }
@@ -74,30 +124,10 @@ export const IdeaCard: FunctionComponent<{ t: any, u: any }> = ({ t, u }) => {
                 </div>
             </div>
             <div className="flex flex-row gap-3 mt-3 text-gray-500">
-                <div className="(!isShowLikes ? 'hidden' : '')relative">
-                    <span onClick={() => { setIsShowLikes(!isShowLikes) }}>{topic.likes.length} Polubień</span>
-                    <div className={'bg-white border border-gray-200 rounded-xl shadow-sm absolute flex flex-col gap-3 p-3 w-80 overflow-scroll max-h-64 ' + (!isShowLikes ? 'hidden' : '')}>
-                        <div onClick={() => { setIsShowLikes(false); }} className="text-right h-2">x</div>
-                        {topic.likes.map(like => (
-                            <div className="flex gap-3 justify-center items-center">
-                                <div>
-                                    <Avatar user={like.author} />
-                                </div>
-                                <div>
-                                    {like.author.name}
-                                </div>
-                                <div className="text-gray-400">
-                                    {like.created}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
+                <ReactionList reactions={topic.likes} reactionName={'likes'} isShow={isShowLikes} setIsShow={setIsShowLikes} />
+                <ReactionList reactions={topic.comments} reactionName={'comments'} isShow={isShowComments} setIsShow={setIsShowComments} />
                 <div>
-                    {topic.comments.length} komentarze
-                </div>
-                <div>
-                    0 wyświetlenia
+                    0 views
                 </div>
             </div>
             <hr className="mt-3" />
@@ -119,20 +149,8 @@ export const IdeaCard: FunctionComponent<{ t: any, u: any }> = ({ t, u }) => {
                     </div>}
                     {topic.comments.map((comment: any) => {
                         return (
-                            <div className="flex gap-1 p-3">
-                                <div className="flex">
-                                    <Avatar user={comment.author} />
-                                </div>
-                                <div className="flex-auto">
-                                    <div className="bg-gray-200 rounded-lg p-3">
-                                        <div className="font-bold">Paweł Ciosek</div>
-                                        <div>{comment.content}</div>
-                                    </div>
-                                    <div className="text-gray-400 text-sm">
-                                        {comment.created}
-                                    </div>
-                                </div>
-                            </div>)
+                            <Comment key={comment.id} comment={comment} toggleLike={toggleLikeComment} />
+                        )
                     })}
                 </div>
                 <div>

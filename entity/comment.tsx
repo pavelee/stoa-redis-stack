@@ -1,6 +1,7 @@
 import { Entity, Schema } from 'redis-om';
 import { getRedisClient } from '../services/redis';
-import { userSchema } from './user';
+import { likeSchema } from './like';
+import { User, userSchema } from './user';
 
 export interface Comment {
     object: string;
@@ -12,14 +13,33 @@ export interface Comment {
 }
 
 export class Comment extends Entity {
-    async getData() {
+    async getData(user: User | null = null) {
         let author = await this.getAuthor();
+        let likes = await this.getLikes();
+        let likeData = [];
+        // @TODO move to function, to keep DRY
+        for (let index = 0; index < likes.length; index++) {
+            const element = likes[index];
+            likeData.push(await element.getData());
+        }
+        let isLiked = false;
+        if (user) {
+            for (let index = 0; index < likeData.length; index++) {
+                const element = likeData[index];
+                if (element.author.id === user.entityId) {
+                    isLiked = true;
+                    break;
+                }
+            }
+        }
         return {
             id: this.entityId,
             content: this.content,
             author: await author.getData(),
+            likes: likeData,
+            isLiked: isLiked,
             created: JSON.parse(JSON.stringify(this.created)),
-            modified: JSON.parse(JSON.stringify(this.modified)),
+            modified: JSON.parse(JSON.stringify(this.modified))
         }
     }
 
@@ -29,6 +49,13 @@ export class Comment extends Entity {
         let user = await repo.fetch(this.author);
         return user;
     }
+
+    async getLikes() {
+        let client = await getRedisClient();
+        let repo = client.fetchRepository(likeSchema);
+        let likes = await repo.search().where('object').eq('comment').where('objectid').eq(this.entityId).return.all();
+        return likes;
+    }    
 }
 
 export const commentSchema = new Schema(Comment, {
