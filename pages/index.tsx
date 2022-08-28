@@ -60,9 +60,11 @@ const Home: NextPage = ({ topics, user }: any) => {
 
   return (
     <div>
-      <div className="mb-3">
-        <NewThread user={user} addThread={addThread} />
-      </div>
+      {
+        user && <div className="mb-3">
+          <NewThread user={user} addThread={addThread} />
+        </div>
+      }
       <div className="space-y-3">
         {
           topics.map((topic: Topic) => {

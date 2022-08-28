@@ -83,13 +83,6 @@ function MyApp({ Component, pageProps }: AppProps) {
               </div>
               <div className="flex-grow">
                 <div className="flex justify-end items-center gap-5">
-                  <div className="flex justify-center items-center">
-                    <Link
-                      href={'/newtopic'}
-                    >
-                      <button className="bg-blue-400 text-white p-3 shadow-sm rounded-xl font-bold">New thread</button>
-                    </Link>
-                  </div>
                   <PointCounter />
                   <NotificationBell notifications={[]} />
                   <AvatarMenu user={user} doLogout={doLogout} />

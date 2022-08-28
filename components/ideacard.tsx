@@ -137,7 +137,14 @@ export const IdeaCard: FunctionComponent<{ t: any, u: any }> = ({ t, u }) => {
                     {topic.isLiked && <FcLike />}
                 </div>
                 <div>
-                    {!topic.isLiked && <span>Do you support it?</span>}
+                    {!topic.isLiked &&
+                        <div className="flex gap-1">
+                            <div>
+                                Do you support it?
+                            </div>
+                            {!u && <div><Link href={'login'}><a className="underline text-blue-500">sing in to support</a></Link></div>}
+                        </div>
+                    }
                     {topic.isLiked && <span>You liked it!</span>}
                 </div>
             </div>
@@ -156,11 +163,22 @@ export const IdeaCard: FunctionComponent<{ t: any, u: any }> = ({ t, u }) => {
                 <div>
                     <hr className="mt-3 mb-3" />
                 </div>
-                <div className="flex gap-3 justify-center items-center">
-                    <Avatar user={u} />
-                    <textarea onChange={(ev) => { setUserComment(ev.target.value) }} className="bg-gray-100 flex-auto rounded-sm shadow-sm p-3"></textarea>
-                    <button onClick={() => { doComment(userComment) }} className="bg-blue-200 p-3 rounded-xl shadow-sm">comment</button>
-                </div>
+                {
+                    u && <div className="flex gap-3 justify-center items-center">
+                        <Avatar user={u} />
+                        <textarea onChange={(ev) => { setUserComment(ev.target.value) }} className="bg-gray-100 flex-auto rounded-sm shadow-sm p-3"></textarea>
+                        <button onClick={() => { doComment(userComment) }} className="bg-blue-200 p-3 rounded-xl shadow-sm">comment</button>
+                    </div>
+                }
+                {
+                    !u && <div className="flex justify-center items-center">
+                        <Link
+                            href={'/login'}
+                        >
+                            <button className="bg-blue-400 text-white p-3 shadow-sm rounded-xl font-bold w-1/4">sign in to comment</button>
+                        </Link>
+                    </div>
+                }
             </div>
         </div>
     )

@@ -30,6 +30,7 @@ const handler = async (
         if (id) {
             const exists = await isEntityExist(client, entityName, id as string);
             if (!exists) {
+                req.session.destroy();
                 return res.status(404).json({});
             }
             getdata = await repo.fetch(id as string);
