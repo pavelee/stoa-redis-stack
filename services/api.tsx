@@ -69,5 +69,16 @@ export const removeLike = async (object: string, objectid: string) => {
 }
 
 export const addComment = async (object: string, objectid: string, content: string) => {
-    
+    const body = {
+        object,
+        objectid,
+        content
+    }
+    let r = await fetch('/api/comment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+    })
+    let d = await r.json()
+    return d;
 }

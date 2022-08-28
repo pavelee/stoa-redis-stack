@@ -3,11 +3,12 @@ import { FcLike, FcLikePlaceholder } from "react-icons/fc"
 import { Topic } from "../entity/topic"
 import { Avatar } from "./avatar"
 import Link from 'next/link';
-import { addLike, getLike, getTopic, removeLike } from "../services/api";
+import { addComment, addLike, getLike, getTopic, removeLike } from "../services/api";
 
 export const IdeaCard: FunctionComponent<{ t: any, u: any }> = ({ t, u }) => {
     const [topic, setTopic] = useState(t);
     const [isShowLikes, setIsShowLikes] = useState(false);
+    const [userComment, setUserComment] = useState('');
     // const [isLiked, setIsLiked] = useState(null);
 
     // const isTopicAlreadyLiked = async (topic: any) => {
@@ -33,8 +34,11 @@ export const IdeaCard: FunctionComponent<{ t: any, u: any }> = ({ t, u }) => {
         }
     }
 
-    const doComment = async () => {
-        
+    const doComment = async (content: string) => {
+        if (content) {
+            await addComment('topic', topic.id, content);
+            await refreshTopic();
+        }
     }
 
     const refreshTopic = async () => {
@@ -136,8 +140,8 @@ export const IdeaCard: FunctionComponent<{ t: any, u: any }> = ({ t, u }) => {
                 </div>
                 <div className="flex gap-3 justify-center items-center">
                     <Avatar user={u} />
-                    <textarea className="bg-gray-100 flex-auto rounded-sm shadow-sm p-3"></textarea>
-                    <button className="bg-blue-200 p-3 rounded-xl shadow-sm">comment</button>
+                    <textarea onChange={(ev) => { setUserComment(ev.target.value) }} className="bg-gray-100 flex-auto rounded-sm shadow-sm p-3"></textarea>
+                    <button onClick={() => { doComment(userComment) }} className="bg-blue-200 p-3 rounded-xl shadow-sm">comment</button>
                 </div>
             </div>
         </div>

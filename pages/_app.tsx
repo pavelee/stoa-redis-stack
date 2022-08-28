@@ -74,7 +74,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="icon" type="image/x-icon" href="/favicon.ico"></link>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
-      <div className="h-screen min-h-full">
+      <div className="h-full min-h-screen">
         <div className="bg-white">
           <div className="container mx-auto p-3">
             <div className="flex rounded-b-sm w-full items-center">
@@ -94,7 +94,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             </div>
           </div>
         </div>
-        <div className="bg-gray-200 h-full p-5 md:p-0 md:pt-5">
+        <div className="bg-gray-200 h-full min-h-screen p-5 md:p-0 md:pt-5 md:pb-5">
           <div className="container mx-auto">
             <div className="flex gap-3">
               <div className="hidden md:block md:w-1/4 flex justify-center">
