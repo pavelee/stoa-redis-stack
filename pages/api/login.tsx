@@ -15,7 +15,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         // on prototype purpose, create user with new name
         if (!user) {
-            let newuserpayload = build(
+            let newuserpayload = await build(
                 `user_${Math.floor(Math.random() * 1000 * 1000 * 1000)}`,
                 name
             );

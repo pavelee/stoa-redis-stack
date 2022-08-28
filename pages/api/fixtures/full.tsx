@@ -32,7 +32,7 @@ export default async function handler(
     const userRepo = client.fetchRepository(userSchema);
     await resetAll(userRepo);
 
-    const pciosek = await createEntity(userRepo, build(
+    const pciosek = await createEntity(userRepo, await build(
         'pciosek',
         'Paweł Ciosek'
     ));

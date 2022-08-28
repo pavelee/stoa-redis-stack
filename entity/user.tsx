@@ -1,6 +1,5 @@
 import { Entity, Repository, Schema } from 'redis-om';
 import { getRedisClient } from '../services/redis';
-
 export interface User {
     username: string;
     name: string;
@@ -40,11 +39,21 @@ export const getRepo = async (): Promise<Repository<User>> => {
     return repo;
 }
 
-export const build = (username: string, name: string) => {
+export const build = async (username: string, name: string) => {
+    // @TODO move to service
+    const url = 'https://placeimg.com/300/300/animals';
+    const fs = require('fs');
+    const response = await fetch(url);
+    let avatarfile = `avatar_${username}`;
+    let saveavatarpath = `/public/avatars/${avatarfile}.jpg`;
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    fs.createWriteStream(`.${saveavatarpath}`).write(buffer);
+
     return {
         username: username,
         name: name,
-        avatar: 'https://placeimg.com/300/300/animals',
+        avatar: `/avatars/${avatarfile}.jpg`,
         created: new Date(),
         points: 0,
     }
