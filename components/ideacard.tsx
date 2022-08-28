@@ -122,7 +122,7 @@ export const IdeaCard: FunctionComponent<{ t: any, u: any }> = ({ t, u }) => {
             </div>
             <div className="flex gap-3 mt-3">
                 <div>
-                    <p>{topic.content}</p>
+                    <p className="pt-2 pb-2">{topic.content}</p>
                 </div>
             </div>
             <div className="flex flex-row gap-3 mt-3 text-gray-500">
@@ -167,7 +167,7 @@ export const IdeaCard: FunctionComponent<{ t: any, u: any }> = ({ t, u }) => {
                     u && <div className="flex gap-3 justify-center items-center">
                         <Avatar user={u} />
                         <textarea onChange={(ev) => { setUserComment(ev.target.value) }} className="bg-gray-100 flex-auto rounded-sm shadow-sm p-3 placeholder-gray-400" placeholder="write a reply"></textarea>
-                        <button onClick={() => { doComment(userComment) }} className="bg-blue-200 p-3 rounded-xl shadow-sm">comment</button>
+                        <button onClick={() => { doComment(userComment) }} className="bg-blue-400 text-white p-3 shadow-sm rounded-xl font-bold">comment</button>
                     </div>
                 }
                 {
