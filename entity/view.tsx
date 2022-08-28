@@ -1,6 +1,6 @@
 import { Entity, Schema } from 'redis-om';
 import { getRedisClient } from '../services/redis';
-import { userSchema } from './user';
+import { User, userSchema } from './user';
 
 export interface View {
     object: string;
@@ -11,7 +11,7 @@ export interface View {
 }
 
 export class View extends Entity {
-    async getData() {
+    async getData(user: User | null = null) {
         let author = await this.getAuthor();
         return {
             id: this.entityId,

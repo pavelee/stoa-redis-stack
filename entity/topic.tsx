@@ -3,6 +3,7 @@ import { Entity, Schema } from 'redis-om';
 import { commentSchema } from './comment';
 import { User, userSchema } from './user';
 import { likeSchema } from './like';
+import { viewSchema } from './view';
 
 export interface Topic {
     content: string;
@@ -15,6 +16,12 @@ export interface Topic {
 export class Topic extends Entity {
     async getData(user: User | null = null) {
         let author = await this.getAuthor();
+        let viewsData = [];
+        let views = await this.getViews();
+        for (let index = 0; index < views.length; index++) {
+            const element = views[index];
+            viewsData.push(await element.getData(user));
+        }
         let comments = await this.getComments();
         let commentsData = [];
         for (let index = 0; index < comments.length; index++) {
@@ -43,6 +50,7 @@ export class Topic extends Entity {
             content: this.content,
             comments: commentsData,
             likes: likeData,
+            views: viewsData,
             author: await author.getData(),
             created: JSON.parse(JSON.stringify(this.created)),
             modified: JSON.parse(JSON.stringify(this.modified)),
@@ -54,6 +62,13 @@ export class Topic extends Entity {
         let client = await getRedisClient();
         let repo = client.fetchRepository(commentSchema);
         return repo;
+    }
+
+    async getViews(onlyUnique: boolean = true) {
+        let client = await getRedisClient();
+        let repo = client.fetchRepository(viewSchema);
+        let views = await repo.search().where('object').eq('topic').where('objectid').eq(this.entityId).return.all();
+        return views;
     }
 
     async getComments() {

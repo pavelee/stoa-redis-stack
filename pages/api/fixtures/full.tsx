@@ -54,6 +54,15 @@ export default async function handler(
         created: new Date(),
     });
 
+    const viewRepo = client.fetchRepository(viewSchema);
+    await resetAll(viewRepo);
+    const view = await createEntity(viewRepo, {
+        author: pciosek.entityId,
+        object: 'topic',
+        objectid: topic.entityId,
+        created: new Date(),
+    });
+
     const commentRepo = client.fetchRepository(commentSchema);
     await resetAll(commentRepo);
     await createEntity(commentRepo, {

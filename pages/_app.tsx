@@ -79,7 +79,11 @@ function MyApp({ Component, pageProps }: AppProps) {
           <div className="container mx-auto p-3">
             <div className="flex rounded-b-sm w-full items-center">
               <div className="shrink">
-                <Logo imagePath={'/logo.svg'} size={64} />
+                <Link href={'/'}>
+                  <div className="cursor-pointer">
+                    <Logo imagePath={'/logo.svg'} size={64} />
+                  </div>
+                </Link>
               </div>
               <div className="flex-grow">
                 <div className="flex justify-end items-center gap-5">

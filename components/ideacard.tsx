@@ -62,6 +62,7 @@ export const IdeaCard: FunctionComponent<{ t: any, u: any }> = ({ t, u }) => {
     const [topic, setTopic] = useState(t);
     const [isShowLikes, setIsShowLikes] = useState(false);
     const [isShowComments, setIsShowComments] = useState(false);
+    const [isShowViews, setIsShowViews] = useState(false);
     const [userComment, setUserComment] = useState('');
 
     const toggleLike = async () => {
@@ -126,9 +127,7 @@ export const IdeaCard: FunctionComponent<{ t: any, u: any }> = ({ t, u }) => {
             <div className="flex flex-row gap-3 mt-3 text-gray-500">
                 <ReactionList reactions={topic.likes} reactionName={'likes'} isShow={isShowLikes} setIsShow={setIsShowLikes} />
                 <ReactionList reactions={topic.comments} reactionName={'comments'} isShow={isShowComments} setIsShow={setIsShowComments} />
-                <div>
-                    0 views
-                </div>
+                <ReactionList reactions={topic.views} reactionName={'views'} isShow={isShowViews} setIsShow={setIsShowViews} />
             </div>
             <hr className="mt-3" />
             <div className="flex mt-3 gap-5 items-center">
