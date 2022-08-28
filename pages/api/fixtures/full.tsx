@@ -40,8 +40,7 @@ export default async function handler(
     const topicRepo = client.fetchRepository(topicSchema);
     await resetAll(topicRepo);
     const topic = await createEntity(topicRepo, {
-        title: 'serious!',
-        desc: 'We are serious!',
+        content: 'We are serious!',
         author: pciosek.entityId,
         created: new Date(),
     });
