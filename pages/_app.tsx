@@ -18,10 +18,7 @@ const UserInfo: FunctionComponent<{ user: any }> = ({ user }) => {
     <div className="bg-white flex justify-center items-center rounded-xl shadow-xl p-5">
       <div className="flex-col">
         <div className="cursor-pointer flex justify-center">
-          <div className="bg-neutral-focus text-neutral-content w-36 h-36">
-            {/* <span className="text-xl">{text}</span> */}
-            <img className="rounded-full" src="https://placeimg.com/300/300/animals" />
-          </div>
+          <Avatar user={user} size={36} />
         </div>
         <div className="text-center mt-3 text-xl">
           {user.name}
